@@ -1,4 +1,0 @@
-[run]
-branch = True
-source = sgbackend, tests
-omit = site-packages

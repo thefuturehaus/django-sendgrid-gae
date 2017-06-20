@@ -1,14 +1,7 @@
-SendGrid-django
+Django-SendGrid-GAE
 ===============
 
-.. image:: https://travis-ci.org/elbuo8/sendgrid-django.svg?branch=master
-   :target: https://travis-ci.org/elbuo8/sendgrid-django
-   :alt: Travis CI
-.. image:: https://codecov.io/github/elbuo8/sendgrid-django/coverage.svg?branch=master
-   :target: https://codecov.io/github/elbuo8/sendgrid-django
-   :alt: codecov.io
-
-Simple django backend to send email using SendGrid's Web API.
+Simple Django backend to send email using SendGrid's Web API on GAE using task queues.
 
 Installation
 ------------
@@ -17,7 +10,7 @@ Install the backend from PyPI:
 
 .. code:: bash
 
-    pip install sendgrid-django
+    pip install fh-django-sendgrid-gae
 
 Add the following to your project's **settings.py**:
 
@@ -38,21 +31,21 @@ Example
     from django.core.mail import EmailMultiAlternatives
 
     send_mail("Your Subject", "This is a simple text email body.",
-      "Yamil Asusta <hello@yamilasusta.com>", ["yamil@sendgrid.com"])
+      "Test User <test@example.com>", ["test@example.com"])
 
     # or
     mail = EmailMultiAlternatives(
       subject="Your Subject",
       body="This is a simple text email body.",
-      from_email="Yamil Asusta <hello@yamilasusta.com>",
-      to=["yamil@sendgrid.com"],
-      headers={"Reply-To": "support@sendgrid.com"}
+      from_email="Test User <test@example.com>",
+      to=["test@example.com"],
+      headers={"Reply-To": "tester@example.com"}
     )
     # Add template
     mail.template_id = 'YOUR TEMPLATE ID FROM SENDGRID ADMIN'
 
     # Replace substitutions in sendgrid template
-    mail.substitutions = {'%username%': 'elbuo8'}
+    mail.substitutions = {'%username%': 'testuser'}
 
     # Attach file
     with open('somefilename.pdf', 'rb') as file:

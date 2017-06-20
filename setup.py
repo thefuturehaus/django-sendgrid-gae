@@ -5,16 +5,16 @@ with open('sgbackend/version.py') as f:
     exec(f.read())
 
 setup(
-    name='sendgrid-django',
+    name='fh-django-sendgrid-gae',
     version=str(__version__),
-    author='Yamil Asusta',
-    author_email='yamil@sendgrid.com',
-    url='https://github.com/elbuo8/sendgrid-django',
+    author='Josh Turmel',
+    author_email='jt@futurehaus.com',
+    url='https://github.com/thefuturehaus/django-sendgrid-gae',
     packages=find_packages(),
     license='MIT',
-    description='SendGrid Backend for Django',
+    description='SendGrid Backend for Django on GAE using task queues',
     long_description=open('./README.rst').read(),
-    install_requires=["sendgrid >= 3.5, < 4"],
+    install_requires=["sendgrid >= 3.5, < 4", "fh-django-gae-tasks"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",

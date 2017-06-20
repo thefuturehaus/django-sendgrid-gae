@@ -18,6 +18,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.base import BaseEmailBackend
+from gae_tasks import tasks
 
 import sendgrid
 from sendgrid.helpers.mail import (
@@ -44,27 +45,31 @@ class SendGridBackend(BaseEmailBackend):
             raise ImproperlyConfigured('''
                 SENDGRID_API_KEY must be declared in settings.py''')
 
-        self.sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
-        self.version = 'sendgrid/{0};django'.format(__version__)
-        self.sg.client.request_headers['User-agent'] = self.version
-
     def send_messages(self, emails):
-        '''
-        Comments
-        '''
+
         if not emails:
             return
 
-        count = 0
+        tasks.add_task(['email'], self._send_messages, emails)
+
+        return len(emails)
+
+    @classmethod
+    def _send_messages(cls, emails):
         for email in emails:
-            mail = self._build_sg_mail(email)
-            try:
-                self.sg.client.mail.send.post(request_body=mail)
-                count += 1
-            except HTTPError as e:
-                if not self.fail_silently:
-                    raise
-        return count
+            tasks.add_task(['email'], cls._send_message, email)
+
+    @classmethod
+    def _send_message(cls, email):
+        api_key = getattr(settings, "SENDGRID_API_KEY", None)
+        sg = sendgrid.SendGridAPIClient(apikey=api_key)
+        version = 'sendgrid/{0};django'.format(__version__)
+        sg.client.request_headers['User-agent'] = version
+        try:
+            sg.client.mail.send.post(request_body=cls._build_sg_mail(email))
+        except HTTPError as e:
+            if not cls.fail_silently:
+                raise
 
     def _build_sg_mail(self, email):
         mail = Mail()

@@ -71,7 +71,8 @@ class SendGridBackend(BaseEmailBackend):
             if not cls.fail_silently:
                 raise
 
-    def _build_sg_mail(self, email):
+    @classmethod
+    def _build_sg_mail(cls, email):
         mail = Mail()
         from_name, from_email = rfc822.parseaddr(email.from_email)
         # Python sendgrid client should improve
